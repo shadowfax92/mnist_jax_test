@@ -7,7 +7,7 @@ from training import setup_training, setup_mesh_sharding, train_step
 
 def main():
     # Configure XLA
-    configure_xla()
+    # configure_xla()
     
     # Print available devices
     print("Available devices:")
