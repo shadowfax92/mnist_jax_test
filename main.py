@@ -4,6 +4,7 @@ from config import configure_xla
 from data import load_mnist, create_data_iterators, get_batch
 from model import Model
 from training import setup_training, setup_mesh_sharding, train_step
+from jax.sharding import NamedSharding, PartitionSpec as PS
 
 def main():
     # Configure XLA
@@ -28,8 +29,8 @@ def main():
     
     # Get a batch and shard it
     images, labels = get_batch(train_iterator)
-    images_sharded = jax.device_put(images, NamedSharding(mesh, PS('x', 'y')))
-    labels_sharded = jax.device_put(labels, NamedSharding(mesh, PS('x', 'y')))
+    images_sharded = jax.device_put(images, NamedSharding(mesh, PS('x')))
+    labels_sharded = jax.device_put(labels, NamedSharding(mesh, PS('x')))
     
     # Test a training step
     try:

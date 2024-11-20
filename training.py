@@ -30,18 +30,20 @@ def setup_training(model, learning_rate=0.001):
     return params, static, opt, opt_state
 
 def setup_mesh_sharding(params):
-    devices = mesh_utils.create_device_mesh((2, 2, 2))
-    mesh = Mesh(devices, axis_names=('x', 'y', 'z'))
+    # Get number of available devices
+    num_devices = len(jax.devices())
+    devices = mesh_utils.create_device_mesh((num_devices,))
+    mesh = Mesh(devices, axis_names=('x',))
     
     params = eqx.tree_at(
         lambda tree: tree.layer1.weight,
         params,
-        replace_fn=lambda node: jax.device_put(node, NamedSharding(mesh, PS('x', 'y')))
+        replace_fn=lambda node: jax.device_put(node, NamedSharding(mesh, PS('x')))
     )
     params = eqx.tree_at(
         lambda tree: tree.layer2.weight,
         params,
-        replace_fn=lambda node: jax.device_put(node, NamedSharding(mesh, PS('x', 'y')))
+        replace_fn=lambda node: jax.device_put(node, NamedSharding(mesh, PS('x')))
     )
     
     return params, mesh
