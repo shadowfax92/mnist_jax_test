@@ -1,0 +1,5 @@
+tensorflow-cpu
+equinox
+optax
+flax
+jax
